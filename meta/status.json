@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-07-18 19:58 UTC",
+  "updated_at": "2026-07-18 19:59 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
   "total_nodes": 350,
-  "unique_collected": 2612,
+  "unique_collected": 2611,
   "countries": 21,
   "by_country": {
     "DE": 40,
@@ -57,7 +57,7 @@
     {
       "url": "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha.txt",
       "ok": true,
-      "nodes": 815
+      "nodes": 814
     },
     {
       "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/super-sub.txt",
