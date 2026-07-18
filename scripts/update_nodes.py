@@ -6,12 +6,14 @@ from __future__ import annotations
 import base64
 import json
 import re
+import socket
 import urllib.error
 import urllib.request
 from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 
 ROOT = Path(__file__).resolve().parents[1]
 SUB_DIR = ROOT / "sub"
@@ -142,10 +144,12 @@ PREFERRED_COUNTRIES = [
 SKIP_COUNTRIES = {"RU"}
 
 # Keep the subscription small — large files + geo downloads cause Happ timeouts in RU.
-MAX_TOTAL = 120
-MAX_PER_COUNTRY_FILE = 40
-MAX_PER_COUNTRY_IN_MAIN = 18
-USER_AGENT = f"{BRAND}-HappUpdater/2.1 (+{REPO_URL})"
+MAX_TOTAL = 80
+MAX_PER_COUNTRY_FILE = 30
+MAX_PER_COUNTRY_IN_MAIN = 14
+TCP_CHECK_WORKERS = 40
+TCP_CHECK_TIMEOUT = 3.0
+USER_AGENT = f"{BRAND}-HappUpdater/2.2 (+{REPO_URL})"
 
 # Prefer CDN mirrors reachable from Russia (raw.githubusercontent often times out).
 SUB_MAIN = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt"
@@ -312,13 +316,88 @@ def prioritize(links: list[str]) -> list[str]:
     return selected
 
 
+def extract_host_port(link: str) -> tuple[str, int] | None:
+    """Best-effort host:port extraction for TCP liveness checks."""
+    try:
+        raw = link.split("#", 1)[0]
+        scheme = link_scheme(raw)
+        if scheme == "vmess":
+            payload = raw.split("://", 1)[1]
+            pad = payload + "=" * (-len(payload) % 4)
+            data = json.loads(base64.urlsafe_b64decode(pad.encode("ascii")).decode("utf-8", "ignore"))
+            host = str(data.get("add") or data.get("address") or "").strip()
+            port = int(data.get("port") or 0)
+            if host and port:
+                return host, port
+            return None
+        if scheme == "ss":
+            # ss://method:pass@host:port or ss://base64@host:port or ss://base64
+            rest = raw.split("://", 1)[1]
+            if "@" in rest:
+                hostport = rest.rsplit("@", 1)[1]
+                host, port_s = hostport.split(":")[:2]
+                return host, int(port_s)
+            # fully base64 body
+            pad = rest + "=" * (-len(rest) % 4)
+            decoded = base64.urlsafe_b64decode(pad.encode("ascii")).decode("utf-8", "ignore")
+            if "@" in decoded:
+                hostport = decoded.rsplit("@", 1)[1]
+                host, port_s = hostport.split(":")[:2]
+                return host, int(port_s)
+            return None
+        parsed = urlparse(raw)
+        host = parsed.hostname
+        port = parsed.port
+        if host and port:
+            return host, int(port)
+    except Exception:
+        return None
+    return None
+
+
+def tcp_alive(link: str) -> bool:
+    hp = extract_host_port(link)
+    if not hp:
+        return False
+    host, port = hp
+    try:
+        with socket.create_connection((host, port), timeout=TCP_CHECK_TIMEOUT):
+            return True
+    except OSError:
+        return False
+
+
+def filter_alive(links: list[str]) -> list[str]:
+    """Keep only nodes whose host:port accepts TCP — dead nodes kill Wi‑Fi in Happ."""
+    if not links:
+        return []
+    alive: list[str] = []
+    print(f"[info] TCP-checking {len(links)} nodes...")
+    with ThreadPoolExecutor(max_workers=TCP_CHECK_WORKERS) as pool:
+        futs = {pool.submit(tcp_alive, link): link for link in links}
+        for fut in as_completed(futs):
+            link = futs[fut]
+            try:
+                ok = fut.result()
+            except Exception:
+                ok = False
+            if ok:
+                alive.append(link)
+    print(f"[info] alive {len(alive)}/{len(links)}")
+    # Preserve original priority order.
+    order = {node_key(x): i for i, x in enumerate(links)}
+    alive.sort(key=lambda x: order.get(node_key(x), 10**9))
+    return alive
+
+
 def build_routing_deeplink() -> str:
-    """Global proxy + Cloudflare DNS. Uses Happ built-in geo files (no GitHub download)."""
-    # Empty Geo* URLs → Happ uses preinstalled geoip/geosite (avoids RU timeout on GitHub).
-    # Do NOT set LastUpdated every run — that forced re-download and caused timeouts.
+    """Split tunnel: Wi‑Fi/direct by default; only blocked sites via VPN.
+
+    GlobalProxy=true was killing internet when a free node was dead.
+    """
     profile = {
-        "Name": f"{BRAND}",
-        "GlobalProxy": "true",
+        "Name": f"{BRAND}-split",
+        "GlobalProxy": "false",
         "RemoteDNSType": "DoH",
         "RemoteDNSDomain": "https://cloudflare-dns.com/dns-query",
         "RemoteDNSIP": "1.1.1.1",
@@ -331,15 +410,22 @@ def build_routing_deeplink() -> str:
             "cloudflare-dns.com": "1.1.1.1",
         },
         "DirectSites": [
-            "geosite:category-ru",
             "geosite:private",
             "domain:svoyskiy.ru",
             "domain:jsdelivr.net",
             "domain:ghproxy.net",
+            "domain:yandex.ru",
+            "domain:yandex.net",
+            "domain:vk.com",
+            "domain:mail.ru",
+            "domain:ok.ru",
+            "domain:wildberries.ru",
+            "domain:ozon.ru",
+            "domain:avito.ru",
+            "domain:gosuslugi.ru",
         ],
         "DirectIp": [
             "geoip:private",
-            "geoip:ru",
             "10.0.0.0/8",
             "172.16.0.0/12",
             "192.168.0.0/16",
@@ -347,27 +433,46 @@ def build_routing_deeplink() -> str:
             "224.0.0.0/4",
             "255.255.255.255",
         ],
+        # Explicit domains — do not rely only on geosite tags in built-in DBs.
         "ProxySites": [
-            "geosite:youtube",
-            "geosite:discord",
-            "geosite:google",
-            "geosite:netflix",
-            "geosite:twitter",
-            "geosite:telegram",
-            "geosite:category-anticensorship",
             "domain:discord.com",
             "domain:discord.gg",
             "domain:discordapp.com",
+            "domain:discordapp.net",
             "domain:discord.media",
-            "domain:googlevideo.com",
+            "domain:discord.co",
+            "domain:discord-attachments-uploads-prd.storage.googleapis.com",
             "domain:youtube.com",
             "domain:youtu.be",
+            "domain:youtube-nocookie.com",
             "domain:ytimg.com",
+            "domain:googlevideo.com",
+            "domain:ggpht.com",
+            "domain:google.com",
+            "domain:googleapis.com",
+            "domain:gstatic.com",
+            "domain:instagram.com",
+            "domain:cdninstagram.com",
+            "domain:facebook.com",
+            "domain:fbcdn.net",
+            "domain:twitter.com",
+            "domain:x.com",
+            "domain:twimg.com",
+            "domain:tiktok.com",
+            "domain:tiktokv.com",
+            "domain:openai.com",
+            "domain:chatgpt.com",
+            "domain:spotify.com",
+            "domain:scdn.co",
+            "geosite:discord",
+            "geosite:youtube",
+            "geosite:google",
+            "geosite:telegram",
         ],
         "ProxyIp": [],
-        "BlockSites": ["geosite:category-ads-all"],
+        "BlockSites": [],
         "BlockIp": [],
-        "DomainStrategy": "IPIfNonMatch",
+        "DomainStrategy": "AsIs",
         "FakeDNS": "false",
     }
     raw = json.dumps(profile, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
@@ -376,10 +481,10 @@ def build_routing_deeplink() -> str:
 
 def subscription_header_lines() -> list[str]:
     announce = (
-        f"VPN от {BRAND}. Для Discord/YouTube бери сервер 🇫🇮 FI / 🇳🇱 NL / 🇩🇪 DE. "
-        f"Сайт: {BRAND_URL}"
+        f"VPN от {BRAND}. Режим split: Wi‑Fi не падает. "
+        f"Discord/YouTube через VPN. Бери FI/NL/DE. {BRAND_URL}"
     )
-    info = f"VPN от {BRAND} — Discord, YouTube и сайты без блокировок"
+    info = f"VPN от {BRAND}: Discord/YouTube через VPN, остальной интернет — напрямую"
     return [
         f"#profile-title: {BRAND}",
         f"#profile-web-page-url: {BRAND_URL}",
@@ -391,11 +496,8 @@ def subscription_header_lines() -> list[str]:
         f"#sub-info-button-link: {BRAND_URL}",
         "#profile-update-interval: 1",
         "#routing-enable: 1",
-        # DPI bypass for Russian ISPs (helps YouTube/Discord TLS).
-        "#fragmentation-enable: 1",
-        "#fragmentation-packets: tlshello",
-        "#fragmentation-length: 50-100",
-        "#fragmentation-interval: 10-20",
+        # Fragmentation off by default — it can break Wi‑Fi on some ISPs/phones.
+        "#fragmentation-enable: 0",
         "#server-address-resolve-enable: 1",
         "#server-address-resolve-dns-domain: https://cloudflare-dns.com/dns-query",
         "#server-address-resolve-dns-ip: 1.1.1.1",
@@ -468,7 +570,21 @@ def main() -> int:
         source_stats.append({"url": url, "ok": True, "nodes": added})
         print(f"[info] +{added} unique from source ({len(links)} raw)")
 
-    selected = prioritize(unique)
+    scored_all: list[tuple[int, int, str]] = []
+    for link in unique:
+        country = detect_country(link)
+        if country in SKIP_COUNTRIES:
+            continue
+        scored_all.append((-protocol_score(link), country_rank(country), link))
+    scored_all.sort()
+    candidates = [x[2] for x in scored_all[:300]]
+    alive = filter_alive(candidates)
+    if alive:
+        selected = prioritize(alive)
+    else:
+        print("[warn] TCP filter found 0 alive nodes — falling back to untested list")
+        selected = prioritize(unique)
+
     renamed: list[str] = []
     counters: dict[str, int] = defaultdict(int)
     by_country: dict[str, list[str]] = defaultdict(list)

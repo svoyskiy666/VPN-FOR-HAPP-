@@ -1,24 +1,24 @@
 {
-  "updated_at": "2026-07-18 20:04 UTC",
+  "updated_at": "2026-07-18 20:14 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
-  "total_nodes": 120,
-  "unique_collected": 2611,
+  "total_nodes": 80,
+  "unique_collected": 2616,
   "countries": 13,
   "by_country": {
-    "DE": 18,
-    "FR": 18,
-    "GB": 18,
-    "NL": 18,
-    "SE": 12,
-    "CH": 11,
-    "TR": 7,
-    "FI": 6,
-    "US": 6,
-    "IE": 2,
-    "PL": 2,
-    "CZ": 1,
-    "LV": 1
+    "DE": 16,
+    "OTHER": 16,
+    "GB": 13,
+    "NL": 8,
+    "US": 8,
+    "FR": 6,
+    "SE": 6,
+    "FI": 2,
+    "HK": 1,
+    "IT": 1,
+    "JP": 1,
+    "TR": 1,
+    "TW": 1
   },
   "sources": [
     {
@@ -49,7 +49,7 @@
     {
       "url": "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha.txt",
       "ok": true,
-      "nodes": 814
+      "nodes": 819
     },
     {
       "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/super-sub.txt",
