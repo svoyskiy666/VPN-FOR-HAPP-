@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aggregate free public proxy nodes into Happ-compatible subscriptions for Russia."""
+"""Build a minimal Happ subscription from RU-tested free node sources."""
 
 from __future__ import annotations
 
@@ -24,17 +24,16 @@ BRAND = "svoyskiy.ru"
 BRAND_URL = "https://svoyskiy.ru"
 REPO_URL = "https://github.com/svoyskiy666/VPN-FOR-HAPP-"
 
-# Public free subscription sources.
+# Prefer sources that already HTTP-test nodes (especially RU-oriented).
 SOURCES = [
+    "https://raw.githubusercontent.com/haker23378-netizen/free-vpn-telegram/main/output/subscription.txt",
+    "https://raw.githubusercontent.com/haker23378-netizen/free-vpn-telegram/main/output/sub/vless.txt",
     "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/v2ray-base64.txt",
-    "https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/all",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/by-country/v2ray-base64-NL.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/by-country/v2ray-base64-DE.txt",
+    "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/by-country/v2ray-base64-FI.txt",
     "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
-    "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub2.txt",
-    "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub3.txt",
-    "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha.txt",
-    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/super-sub.txt",
     "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
-    "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/hysteria2.txt",
 ]
 
 PROTO_RE = re.compile(
@@ -43,123 +42,49 @@ PROTO_RE = re.compile(
 )
 
 COUNTRY_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("US", re.compile(r"\b(US|USA|United[- ]?States|America|США|美国|美國)\b|🇺🇸", re.I)),
-    ("DE", re.compile(r"\b(DE|Germany|Deutschland|Германия|德国|德國)\b|🇩🇪", re.I)),
-    ("NL", re.compile(r"\b(NL|Netherlands|Holland|Нидерланды|荷兰|荷蘭)\b|🇳🇱", re.I)),
-    ("GB", re.compile(r"\b(GB|UK|United[- ]?Kingdom|Britain|England|Британия|英国|英國)\b|🇬🇧", re.I)),
-    ("FR", re.compile(r"\b(FR|France|Франция|法国|法國)\b|🇫🇷", re.I)),
-    ("FI", re.compile(r"\b(FI|Finland|Финляндия|芬兰|芬蘭)\b|🇫🇮", re.I)),
-    ("SE", re.compile(r"\b(SE|Sweden|Швеция|瑞典)\b|🇸🇪", re.I)),
-    ("TR", re.compile(r"\b(TR|Turkey|Türkiye|Турция|土耳其)\b|🇹🇷", re.I)),
-    ("JP", re.compile(r"\b(JP|Japan|Япония|日本)\b|🇯🇵", re.I)),
-    ("KR", re.compile(r"\b(KR|Korea|Южная[- ]?Корея|韩国|韓國)\b|🇰🇷", re.I)),
-    ("SG", re.compile(r"\b(SG|Singapore|Сингапур|新加坡)\b|🇸🇬", re.I)),
-    ("HK", re.compile(r"\b(HK|Hong[- ]?Kong|Гонконг|香港)\b|🇭🇰", re.I)),
-    ("TW", re.compile(r"\b(TW|Taiwan|Тайвань|台湾|台灣)\b|🇹🇼", re.I)),
-    ("CA", re.compile(r"\b(CA|Canada|Канада|加拿大)\b|🇨🇦", re.I)),
-    ("AU", re.compile(r"\b(AU|Australia|Австралия|澳大利亚|澳洲)\b|🇦🇺", re.I)),
-    ("IN", re.compile(r"\b(IN|India|Индия|印度)\b|🇮🇳", re.I)),
-    ("BR", re.compile(r"\b(BR|Brazil|Бразилия|巴西)\b|🇧🇷", re.I)),
-    ("RU", re.compile(r"\b(RU|Russia|Россия|俄国|俄羅斯)\b|🇷🇺", re.I)),
-    ("UA", re.compile(r"\b(UA|Ukraine|Украина|乌克兰|烏克蘭)\b|🇺🇦", re.I)),
-    ("PL", re.compile(r"\b(PL|Poland|Польша|波兰|波蘭)\b|🇵🇱", re.I)),
-    ("IT", re.compile(r"\b(IT|Italy|Италия|意大利)\b|🇮🇹", re.I)),
-    ("ES", re.compile(r"\b(ES|Spain|Испания|西班牙)\b|🇪🇸", re.I)),
-    ("CH", re.compile(r"\b(CH|Switzerland|Швейцария|瑞士)\b|🇨🇭", re.I)),
-    ("AT", re.compile(r"\b(AT|Austria|Австрия|奥地利|奧地利)\b|🇦🇹", re.I)),
-    ("IE", re.compile(r"\b(IE|Ireland|Ирландия|爱尔兰|愛爾蘭)\b|🇮🇪", re.I)),
-    ("AE", re.compile(r"\b(AE|UAE|Dubai|ОАЭ|阿联酋)\b|🇦🇪", re.I)),
-    ("IL", re.compile(r"\b(IL|Israel|Израиль|以色列)\b|🇮🇱", re.I)),
-    ("LV", re.compile(r"\b(LV|Latvia|Латвия|拉脱维亚)\b|🇱🇻", re.I)),
-    ("EE", re.compile(r"\b(EE|Estonia|Эстония|爱沙尼亚)\b|🇪🇪", re.I)),
-    ("LT", re.compile(r"\b(LT|Lithuania|Литва|立陶宛)\b|🇱🇹", re.I)),
-    ("CZ", re.compile(r"\b(CZ|Czech|Чехия|捷克)\b|🇨🇿", re.I)),
+    ("NL", re.compile(r"\b(NL|Netherlands|Holland|Нидерланды)\b|🇳🇱", re.I)),
+    ("DE", re.compile(r"\b(DE|Germany|Deutschland|Германия)\b|🇩🇪", re.I)),
+    ("FI", re.compile(r"\b(FI|Finland|Финляндия)\b|🇫🇮", re.I)),
+    ("SE", re.compile(r"\b(SE|Sweden|Швеция)\b|🇸🇪", re.I)),
+    ("PL", re.compile(r"\b(PL|Poland|Польша)\b|🇵🇱", re.I)),
+    ("TR", re.compile(r"\b(TR|Turkey|Türkiye|Турция)\b|🇹🇷", re.I)),
+    ("GB", re.compile(r"\b(GB|UK|United[- ]?Kingdom|Britain)\b|🇬🇧", re.I)),
+    ("FR", re.compile(r"\b(FR|France|Франция)\b|🇫🇷", re.I)),
+    ("US", re.compile(r"\b(US|USA|United[- ]?States|America|США)\b|🇺🇸", re.I)),
+    ("JP", re.compile(r"\b(JP|Japan|Япония)\b|🇯🇵", re.I)),
+    ("SG", re.compile(r"\b(SG|Singapore|Сингапур)\b|🇸🇬", re.I)),
+    ("RU", re.compile(r"\b(RU|Russia|Россия)\b|🇷🇺", re.I)),
 ]
 
 COUNTRY_FLAGS = {
-    "US": "🇺🇸",
-    "DE": "🇩🇪",
     "NL": "🇳🇱",
-    "GB": "🇬🇧",
-    "FR": "🇫🇷",
+    "DE": "🇩🇪",
     "FI": "🇫🇮",
     "SE": "🇸🇪",
-    "TR": "🇹🇷",
-    "JP": "🇯🇵",
-    "KR": "🇰🇷",
-    "SG": "🇸🇬",
-    "HK": "🇭🇰",
-    "TW": "🇹🇼",
-    "CA": "🇨🇦",
-    "AU": "🇦🇺",
-    "IN": "🇮🇳",
-    "BR": "🇧🇷",
-    "RU": "🇷🇺",
-    "UA": "🇺🇦",
     "PL": "🇵🇱",
-    "IT": "🇮🇹",
-    "ES": "🇪🇸",
-    "CH": "🇨🇭",
-    "AT": "🇦🇹",
-    "IE": "🇮🇪",
-    "AE": "🇦🇪",
-    "IL": "🇮🇱",
-    "LV": "🇱🇻",
-    "EE": "🇪🇪",
-    "LT": "🇱🇹",
-    "CZ": "🇨🇿",
+    "TR": "🇹🇷",
+    "GB": "🇬🇧",
+    "FR": "🇫🇷",
+    "US": "🇺🇸",
+    "JP": "🇯🇵",
+    "SG": "🇸🇬",
+    "RU": "🇷🇺",
     "OTHER": "🌍",
 }
 
-# Best exits from Russia for Discord / YouTube / Google.
-PREFERRED_COUNTRIES = [
-    "FI",
-    "NL",
-    "DE",
-    "SE",
-    "PL",
-    "LV",
-    "EE",
-    "LT",
-    "CZ",
-    "TR",
-    "GB",
-    "FR",
-    "AT",
-    "CH",
-    "IE",
-    "US",
-    "CA",
-    "JP",
-    "SG",
-    "HK",
-    "TW",
-    "KR",
-    "AE",
-    "AU",
-    "OTHER",
-]
+PREFERRED = ["NL", "DE", "FI", "SE", "PL", "TR", "GB", "FR", "US", "JP", "SG", "OTHER"]
+SKIP = {"RU"}
 
-# Skip RU exits in the main list — they don't bypass RU blocks.
-SKIP_COUNTRIES = {"RU"}
+MAX_TOTAL = 60
+MAX_PER_COUNTRY = 12
+TCP_WORKERS = 40
+TCP_TIMEOUT = 2.5
+USER_AGENT = f"{BRAND}-HappUpdater/3.0 (+{REPO_URL})"
 
-# Keep the subscription small — large files + geo downloads cause Happ timeouts in RU.
-MAX_TOTAL = 80
-MAX_PER_COUNTRY_FILE = 30
-MAX_PER_COUNTRY_IN_MAIN = 14
-TCP_CHECK_WORKERS = 40
-TCP_CHECK_TIMEOUT = 3.0
-USER_AGENT = f"{BRAND}-HappUpdater/2.3 (+{REPO_URL})"
-
-# Prefer CDN mirrors reachable from Russia (raw.githubusercontent often times out).
-# wifi-safe.txt = per-app proxy only (does not kill system DNS / Wi‑Fi).
-SUB_SAFE = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/wifi-safe.txt"
-SUB_MAIN = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt"
-SUB_LITE = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ-lite.txt"
-SUB_YT = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/discord-youtube.txt"
+SUB_SIMPLE = f"https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/simple.txt"
 SUB_MIRROR = (
     "https://ghproxy.net/https://raw.githubusercontent.com/"
-    "svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt"
+    "svoyskiy666/VPN-FOR-HAPP-/main/sub/simple.txt"
 )
 
 
@@ -192,7 +117,7 @@ def maybe_b64_decode(text: str) -> str:
         decoded = base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8", errors="ignore")
     except Exception:
         return text
-    if "://" in decoded or PROTO_RE.search(decoded.splitlines()[0] if decoded else ""):
+    if "://" in decoded:
         return decoded
     return text
 
@@ -202,7 +127,7 @@ def extract_links(text: str) -> list[str]:
     links: list[str] = []
     for line in content.splitlines():
         line = line.strip()
-        if not line or line.startswith("#"):
+        if not line or line.startswith("#") or line.startswith("happ://"):
             continue
         for part in re.split(r"[\s]+", line):
             part = part.strip().strip("`\"'")
@@ -212,9 +137,7 @@ def extract_links(text: str) -> list[str]:
 
 
 def node_key(link: str) -> str:
-    if "#" in link:
-        link = link.split("#", 1)[0]
-    return link.lower()
+    return link.split("#", 1)[0].lower()
 
 
 def node_name(link: str) -> str:
@@ -224,8 +147,7 @@ def node_name(link: str) -> str:
 
 
 def detect_country(link: str) -> str:
-    name = node_name(link)
-    hay = f"{name} {link}"
+    hay = f"{node_name(link)} {link}"
     for code, pattern in COUNTRY_PATTERNS:
         if pattern.search(hay):
             return code
@@ -233,94 +155,46 @@ def detect_country(link: str) -> str:
 
 
 def link_scheme(link: str) -> str:
-    head = link.split("://", 1)[0] if "://" in link else "vpn"
-    return head.lower()
+    return link.split("://", 1)[0].lower() if "://" in link else "vpn"
 
 
 def protocol_score(link: str) -> int:
-    """Higher = better for RU DPI / Discord / YouTube."""
     scheme = link_scheme(link)
     low = link.lower()
     score = 0
     if scheme in ("hysteria2", "hy2"):
-        score += 50
+        score += 55
     elif scheme == "vless" and "reality" in low:
-        score += 45
+        score += 50
     elif scheme == "vless":
-        score += 30
+        score += 35
     elif scheme == "trojan":
         score += 25
     elif scheme == "vmess":
-        score += 15
+        score += 12
     elif scheme == "ss":
-        score += 8
-    else:
-        score += 1
-    if "xtls-rprx-vision" in low or "flow=xtls" in low:
+        score += 5
+    if "xtls-rprx-vision" in low:
         score += 8
     if "security=reality" in low or "security=tls" in low:
         score += 5
-    if "insecure=1" in low or "allowinsecure=1" in low:
-        score -= 3
     return score
 
 
 def country_rank(code: str) -> int:
     try:
-        return PREFERRED_COUNTRIES.index(code)
+        return PREFERRED.index(code)
     except ValueError:
-        return len(PREFERRED_COUNTRIES) + 1
+        return 99
 
 
 def rename_node(link: str, country: str, index: int) -> str:
     flag = COUNTRY_FLAGS.get(country, "🌍")
     base = link.split("#", 1)[0]
-    # Short names = smaller subscription = fewer Happ timeouts.
-    title = f"{flag} {country}-{index:02d} {BRAND}"
-    return f"{base}#{title}"
-
-
-def prioritize(links: list[str]) -> list[str]:
-    scored: list[tuple[int, int, int, str]] = []
-    for link in links:
-        country = detect_country(link)
-        if country in SKIP_COUNTRIES:
-            continue
-        scored.append((-protocol_score(link), country_rank(country), hash(node_key(link)) % 10_000, link))
-    scored.sort()
-
-    by_country: dict[str, list[str]] = defaultdict(list)
-    for _, _, _, link in scored:
-        by_country[detect_country(link)].append(link)
-
-    selected: list[str] = []
-    pools = {code: lst[:] for code, lst in by_country.items()}
-
-    # First fill preferred countries with best protocols.
-    for code in PREFERRED_COUNTRIES:
-        bucket = pools.get(code, [])
-        take = min(MAX_PER_COUNTRY_IN_MAIN, len(bucket), max(0, MAX_TOTAL - len(selected)))
-        selected.extend(bucket[:take])
-        pools[code] = bucket[take:]
-        if len(selected) >= MAX_TOTAL:
-            return selected
-
-    # Fill remaining slots.
-    while len(selected) < MAX_TOTAL and any(pools.values()):
-        progressed = False
-        for code in PREFERRED_COUNTRIES + sorted(set(pools) - set(PREFERRED_COUNTRIES)):
-            if pools.get(code):
-                selected.append(pools[code].pop(0))
-                progressed = True
-                if len(selected) >= MAX_TOTAL:
-                    break
-        if not progressed:
-            break
-    return selected
+    return f"{base}#{flag} {country}-{index:02d} {BRAND}"
 
 
 def extract_host_port(link: str) -> tuple[str, int] | None:
-    """Best-effort host:port extraction for TCP liveness checks."""
     try:
         raw = link.split("#", 1)[0]
         scheme = link_scheme(raw)
@@ -328,19 +202,15 @@ def extract_host_port(link: str) -> tuple[str, int] | None:
             payload = raw.split("://", 1)[1]
             pad = payload + "=" * (-len(payload) % 4)
             data = json.loads(base64.urlsafe_b64decode(pad.encode("ascii")).decode("utf-8", "ignore"))
-            host = str(data.get("add") or data.get("address") or "").strip()
+            host = str(data.get("add") or "").strip()
             port = int(data.get("port") or 0)
-            if host and port:
-                return host, port
-            return None
+            return (host, port) if host and port else None
         if scheme == "ss":
-            # ss://method:pass@host:port or ss://base64@host:port or ss://base64
             rest = raw.split("://", 1)[1]
             if "@" in rest:
                 hostport = rest.rsplit("@", 1)[1]
                 host, port_s = hostport.split(":")[:2]
                 return host, int(port_s)
-            # fully base64 body
             pad = rest + "=" * (-len(rest) % 4)
             decoded = base64.urlsafe_b64decode(pad.encode("ascii")).decode("utf-8", "ignore")
             if "@" in decoded:
@@ -349,10 +219,8 @@ def extract_host_port(link: str) -> tuple[str, int] | None:
                 return host, int(port_s)
             return None
         parsed = urlparse(raw)
-        host = parsed.hostname
-        port = parsed.port
-        if host and port:
-            return host, int(port)
+        if parsed.hostname and parsed.port:
+            return parsed.hostname, int(parsed.port)
     except Exception:
         return None
     return None
@@ -364,72 +232,59 @@ def tcp_alive(link: str) -> bool:
         return False
     host, port = hp
     try:
-        with socket.create_connection((host, port), timeout=TCP_CHECK_TIMEOUT):
+        with socket.create_connection((host, port), timeout=TCP_TIMEOUT):
             return True
     except OSError:
         return False
 
 
 def filter_alive(links: list[str]) -> list[str]:
-    """Keep only nodes whose host:port accepts TCP — dead nodes kill Wi‑Fi in Happ."""
     if not links:
         return []
-    alive: list[str] = []
     print(f"[info] TCP-checking {len(links)} nodes...")
-    with ThreadPoolExecutor(max_workers=TCP_CHECK_WORKERS) as pool:
+    alive: list[str] = []
+    with ThreadPoolExecutor(max_workers=TCP_WORKERS) as pool:
         futs = {pool.submit(tcp_alive, link): link for link in links}
         for fut in as_completed(futs):
             link = futs[fut]
             try:
-                ok = fut.result()
+                if fut.result():
+                    alive.append(link)
             except Exception:
-                ok = False
-            if ok:
-                alive.append(link)
-    print(f"[info] alive {len(alive)}/{len(links)}")
-    # Preserve original priority order.
+                pass
     order = {node_key(x): i for i, x in enumerate(links)}
     alive.sort(key=lambda x: order.get(node_key(x), 10**9))
+    print(f"[info] alive {len(alive)}/{len(links)}")
     return alive
 
 
-# Only these apps go into the VPN tunnel (Android). Everything else keeps normal Wi‑Fi/DNS.
-PER_APP_PROXY_PACKAGES = ",".join(
-    [
-        "com.discord",
-        "com.android.chrome",
-        "com.chrome.beta",
-        "com.chrome.dev",
-        "com.google.android.youtube",
-        "org.mozilla.firefox",
-        "org.mozilla.firefox_beta",
-        "com.yandex.browser",
-        "com.opera.browser",
-        "com.opera.mini.native",
-        "com.microsoft.emmx",
-        "com.brave.browser",
-        "com.sec.android.app.sbrowser",
-        "com.instagram.android",
-        "org.telegram.messenger",
-        "org.telegram.messenger.web",
-        "org.thunderdog.challegram",
-        "com.zhiliaoapp.musically",  # TikTok
-        "com.twitter.android",
-        "com.spotify.music",
-        "com.openai.chatgpt",
-    ]
-)
+def prioritize(links: list[str]) -> list[str]:
+    by_country: dict[str, list[str]] = defaultdict(list)
+    scored = sorted(
+        links,
+        key=lambda l: (-protocol_score(l), country_rank(detect_country(l))),
+    )
+    for link in scored:
+        code = detect_country(link)
+        if code in SKIP:
+            continue
+        by_country[code].append(link)
+
+    selected: list[str] = []
+    for code in PREFERRED:
+        bucket = by_country.get(code, [])
+        selected.extend(bucket[:MAX_PER_COUNTRY])
+        if len(selected) >= MAX_TOTAL:
+            return selected[:MAX_TOTAL]
+    return selected[:MAX_TOTAL]
 
 
 def subscription_header_lines() -> list[str]:
-    """Safe mode: no full-device TUN routing. Per-app proxy only (fixes NO_INTERNET)."""
+    """Minimal Happ metadata only — no routing/per-app (those broke DNS for users)."""
     announce = (
-        f"VPN от {BRAND}. В туннель идут только Discord/браузер/YouTube. "
-        f"Остальной интернет не трогаем. Удали старую подписку! {BRAND_URL}"
-    )
-    info = (
-        f"VPN от {BRAND}: только Discord и браузер через VPN — "
-        f"чтобы Wi‑Fi и DNS не пропадали"
+        f"VPN от {BRAND}. Выбери сервер и жми подключить. "
+        f"Если нет интернета — Happ → Настройки → Приложения → только Discord/Chrome. "
+        f"{BRAND_URL}"
     )
     return [
         f"#profile-title: {BRAND}",
@@ -437,17 +292,10 @@ def subscription_header_lines() -> list[str]:
         f"#support-url: {BRAND_URL}",
         f"#announce: {b64_text(announce)}",
         f"#sub-info-color: blue",
-        f"#sub-info-text: {info}",
+        f"#sub-info-text: VPN от {BRAND} — сайт {BRAND_URL}",
         f"#sub-info-button-text: Сайт {BRAND}",
         f"#sub-info-button-link: {BRAND_URL}",
         "#profile-update-interval: 1",
-        # Kill previous routing profiles that captured ALL DNS → NO_INTERNET.
-        "#routing-enable: 0",
-        "happ://routing/off",
-        "#fragmentation-enable: 0",
-        # Android: VPN only for selected apps — system DNS/Wi‑Fi stay alive.
-        "#per-app-proxy-mode: on",
-        f"#per-app-proxy-list-set: {PER_APP_PROXY_PACKAGES}",
     ]
 
 
@@ -466,26 +314,16 @@ def update_readme_status(status: dict) -> None:
     if not readme.exists():
         return
     text = readme.read_text(encoding="utf-8")
-    start = "<!-- STATUS:START -->"
-    end = "<!-- STATUS:END -->"
+    start, end = "<!-- STATUS:START -->", "<!-- STATUS:END -->"
     block = (
         f"{start}\n"
         f"**Обновлено:** `{status['updated_at']}` · "
         f"**Серверов:** `{status['total_nodes']}` · "
-        f"**Локаций:** `{status['countries']}` · "
         f"**VPN:** [`{BRAND}`]({BRAND_URL})\n"
         f"{end}"
     )
     if start in text and end in text:
-        text = re.sub(
-            re.escape(start) + r".*?" + re.escape(end),
-            block,
-            text,
-            count=1,
-            flags=re.S,
-        )
-    else:
-        text = block + "\n\n" + text
+        text = re.sub(re.escape(start) + r".*?" + re.escape(end), block, text, count=1, flags=re.S)
     readme.write_text(text, encoding="utf-8")
 
 
@@ -510,31 +348,25 @@ def main() -> int:
             key = node_key(link)
             if key in seen:
                 continue
+            # Prefer modern protocols for RU DPI.
+            if link_scheme(link) not in ("vless", "hysteria2", "hy2", "trojan"):
+                continue
             seen.add(key)
             unique.append(link)
             added += 1
         source_stats.append({"url": url, "ok": True, "nodes": added})
-        print(f"[info] +{added} unique from source ({len(links)} raw)")
+        print(f"[info] +{added} unique ({len(links)} raw)")
 
-    scored_all: list[tuple[int, int, str]] = []
-    for link in unique:
-        country = detect_country(link)
-        if country in SKIP_COUNTRIES:
-            continue
-        scored_all.append((-protocol_score(link), country_rank(country), link))
-    scored_all.sort()
-    candidates = [x[2] for x in scored_all[:300]]
+    scored = sorted(unique, key=lambda l: (-protocol_score(l), country_rank(detect_country(l))))
+    candidates = scored[:250]
     alive = filter_alive(candidates)
-    if alive:
-        selected = prioritize(alive)
-    else:
-        print("[warn] TCP filter found 0 alive nodes — falling back to untested list")
-        selected = prioritize(unique)
+    selected = prioritize(alive if alive else candidates)
+    if not alive:
+        print("[warn] no TCP-alive nodes, using untested fallback")
 
     renamed: list[str] = []
     counters: dict[str, int] = defaultdict(int)
     by_country: dict[str, list[str]] = defaultdict(list)
-
     for link in selected:
         country = detect_country(link)
         counters[country] += 1
@@ -542,30 +374,25 @@ def main() -> int:
         renamed.append(pretty)
         by_country[country].append(pretty)
 
+    # Primary simple subscription (new name = no CDN/old-settings cache).
+    write_subscription(SUB_DIR / "simple.txt", renamed)
     write_subscription(SUB_DIR / "happ.txt", renamed)
+    write_subscription(SUB_DIR / "happ-lite.txt", renamed[:40])
+    write_subscription(SUB_DIR / "wifi-safe.txt", renamed[:40])
     write_plain(SUB_DIR / "happ-plain.txt", renamed)
-    # Ultra-light pack for flaky RU networks / Happ timeout.
-    lite = renamed[:50]
-    write_subscription(SUB_DIR / "happ-lite.txt", lite)
-    # New filename avoids CDN cache of old broken GlobalProxy subscriptions.
-    write_subscription(SUB_DIR / "wifi-safe.txt", lite)
 
     for old in COUNTRY_DIR.glob("*.txt"):
         old.unlink()
     country_files: dict[str, int] = {}
     for code, links in sorted(by_country.items()):
-        trimmed = links[:MAX_PER_COUNTRY_FILE]
-        if not trimmed:
-            continue
-        write_subscription(COUNTRY_DIR / f"{code}.txt", trimmed)
-        country_files[code] = len(trimmed)
+        write_subscription(COUNTRY_DIR / f"{code}.txt", links[:20])
+        country_files[code] = len(links[:20])
 
-    # Recommended EU pack for Discord/YouTube from Russia.
-    recommended: list[str] = []
-    for code in ("FI", "NL", "DE", "SE", "PL", "TR", "GB"):
-        recommended.extend(by_country.get(code, [])[:12])
-    if recommended:
-        write_subscription(SUB_DIR / "discord-youtube.txt", recommended[:60])
+    eu: list[str] = []
+    for code in ("NL", "DE", "FI", "SE", "PL", "TR", "GB"):
+        eu.extend(by_country.get(code, [])[:10])
+    if eu:
+        write_subscription(SUB_DIR / "discord-youtube.txt", eu[:40])
 
     updated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     status = {
@@ -578,24 +405,16 @@ def main() -> int:
         "by_country": dict(sorted(country_files.items(), key=lambda x: (-x[1], x[0]))),
         "sources": source_stats,
         "subscription": {
-            "safe": SUB_SAFE,
-            "main": SUB_MAIN,
-            "lite": SUB_LITE,
-            "discord_youtube": SUB_YT,
+            "simple": SUB_SIMPLE,
             "mirror": SUB_MIRROR,
-            "github_raw": (
-                "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt"
-            ),
         },
     }
     (META_DIR / "status.json").write_text(
-        json.dumps(status, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
+        json.dumps(status, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     (META_DIR / "last_update.txt").write_text(updated_at + "\n", encoding="utf-8")
     update_readme_status(status)
-
-    print(f"[ok] wrote {len(renamed)} nodes / {len(country_files)} locations / brand={BRAND}")
+    print(f"[ok] {len(renamed)} nodes → sub/simple.txt")
     return 0
 
 
