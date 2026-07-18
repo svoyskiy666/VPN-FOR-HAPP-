@@ -2,19 +2,18 @@
   "updated_at": "2026-07-18 20:27 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
-  "total_nodes": 54,
+  "total_nodes": 42,
   "unique_collected": 1029,
-  "countries": 9,
+  "countries": 8,
   "by_country": {
-    "DE": 12,
     "FR": 12,
     "OTHER": 12,
-    "NL": 8,
+    "NL": 7,
     "SE": 4,
     "US": 3,
+    "DE": 2,
     "FI": 1,
-    "GB": 1,
-    "JP": 1
+    "GB": 1
   },
   "sources": [
     {
