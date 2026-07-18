@@ -7,6 +7,26 @@
 **Обновлено:** `2026-07-18 19:49 UTC` · **Серверов:** `400` · **Локаций:** `24`
 <!-- STATUS:END -->
 
+> **Важно:** репозиторий должен быть **Public**.  
+> Иначе Happ не сможет скачать подписку по ссылке.  
+> GitHub → **Settings** → **General** → **Danger Zone** → **Change repository visibility** → **Public**.
+
+---
+
+## Ссылка для подключения (главная)
+
+```
+https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt
+```
+
+CDN-зеркало:
+
+```
+https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt
+```
+
+В Happ: **+** → **Добавить подписку** → вставь ссылку → обнови → выбери страну → подключись.
+
 ---
 
 ## Быстрый импорт в Happ (1 клик)
@@ -23,36 +43,16 @@ happ://crypt5/fzvdgtNCK4PjaVxvCCYfYPBf16nIaL0r5GQIn1xuSqlK/M7PWFrJv4f1ZW14A2FWPU
 happ://crypt5/fzvd3UL3MeSxrEz1EMOohcGG151DSz2kmeIx0bQVkqniUR7mrXACs18FKq4ud5gbtA/Y1XgcfdXMLmWJb0mi/lAwKM7hHz/RbOzQOGYD6+6iE6RQzCUDzmcez1embrL2wQpuY0rL3WauErQY2XmHAvcRYHDWPmIKtlM/Q+iSYcu54QqJZAmOeD==QpwPsj3DCVMGA9m5UkTrRHbOH64R7cBa5WHEe/uYTHfaFaarwJa8p9cvEom+quWPnAun/hGvF+5UCx7bZh/ggrSRzv6epDAb+KWNypjSzISpJKHSzLpAC7Fa8FYCtAHu1Sn4qeNZsKTyPJ3mV1xliYwtAeocdBbJ1HJVcY3tpoFjROBisWUET6y/eWXHr93rF4DQCqvFmnfSxxesewuRR7Z4Le8JZSGP8Vv4jO4WI1JTG8J2iKfsk6S2XT0uvk9ETvSKfLtw0im32rvCZRgCZYb4/3vf9SzULAI/IB20Zj9Koj6hBOYF5770Byeluw8wk9L88AuMI9PH7Hq6yhWgdai3HeMAC6uFfkGdQWI5GQYC2vEFCx2cOLuf9JGyhBqHcE5AZFYakIdaSvDltauJUy1UVhYe0NPnPR+q5IjpArl0/JSiTdtlnqRKFEeUkno4ZyPHbbP3KuBxgD7StuREVD+AGDldTLWqxu5CTcjXsamYvDlgJd3rPemAgv4AlpO7j+DSNc/ehlf4soUtzUS4tAd07BXVebzV5ipcDTpWAO8EFPPnWulLwFwJvcl0ViI4+UqRvrznGUj4xsP1TFXFB5TUyUy+VcBXfQcoPq6O4R+iL6B+XarPwMx10z65hlK5n3mHDOUlgNPnWbFsLPTxr8r8v2YT83uax060nWiYfoE=ff
 ```
 
-Или просто скопируй ссылку подписки ниже вручную.
-
----
-
-## Ссылка для подключения (скопируй)
-
-### Основная подписка для Happ
-
-```
-https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt
-```
-
-**Зеркало (CDN):**
-
-```
-https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt
-```
-
-> Вставь любую из ссылок в Happ → **+** → **Добавить подписку**.
+Или просто скопируй ссылку подписки вверху вручную.
 
 ---
 
 ## Как подключить за 30 секунд
 
-1. Установи **Happ**  
-   - Android: [Google Play / сайт Happ](https://www.happ.su/)  
-   - iOS: [App Store / сайт Happ](https://www.happ.su/)
-2. Открой Happ → нажми **+** справа сверху
-3. Выбери **Добавить подписку / Subscription URL**
-4. Вставь ссылку выше
+1. Сделай репозиторий **Public** (иначе ссылка не откроется)
+2. Установи **Happ** — [happ.su](https://www.happ.su/)
+3. Открой Happ → **+** → **Добавить подписку**
+4. Вставь ссылку из блока выше
 5. Обнови подписку → выбери сервер (страну) → **Подключить**
 
 Если GitHub raw не открывается — используй CDN-зеркало.
