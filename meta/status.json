@@ -1,16 +1,16 @@
 {
-  "updated_at": "2026-07-18 19:49 UTC",
-  "total_nodes": 400,
+  "updated_at": "2026-07-18 19:58 UTC",
+  "brand": "svoyskiy.ru",
+  "website": "https://svoyskiy.ru",
+  "total_nodes": 350,
   "unique_collected": 2612,
-  "countries": 24,
+  "countries": 21,
   "by_country": {
-    "DE": 35,
-    "FR": 35,
-    "JP": 35,
-    "NL": 35,
-    "OTHER": 35,
-    "RU": 35,
-    "US": 35,
+    "DE": 40,
+    "FR": 40,
+    "JP": 40,
+    "NL": 40,
+    "US": 40,
     "GB": 30,
     "SG": 30,
     "HK": 12,
@@ -22,12 +22,11 @@
     "TW": 8,
     "TR": 7,
     "FI": 6,
-    "BR": 3,
     "IE": 2,
-    "IN": 2,
-    "IT": 2,
     "PL": 2,
-    "ES": 1
+    "CZ": 1,
+    "LV": 1,
+    "OTHER": 1
   },
   "sources": [
     {
@@ -78,7 +77,7 @@
   ],
   "subscription": {
     "main": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
-    "cdn": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt",
-    "plain": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ-plain.txt"
+    "discord_youtube": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/discord-youtube.txt",
+    "cdn": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt"
   }
 }
