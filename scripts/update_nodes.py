@@ -6,7 +6,6 @@ from __future__ import annotations
 import base64
 import json
 import re
-import time
 import urllib.error
 import urllib.request
 from collections import defaultdict
@@ -142,10 +141,19 @@ PREFERRED_COUNTRIES = [
 # Skip RU exits in the main list — they don't bypass RU blocks.
 SKIP_COUNTRIES = {"RU"}
 
-MAX_TOTAL = 350
-MAX_PER_COUNTRY_FILE = 80
-MAX_PER_COUNTRY_IN_MAIN = 40
-USER_AGENT = f"{BRAND}-HappUpdater/2.0 (+{REPO_URL})"
+# Keep the subscription small — large files + geo downloads cause Happ timeouts in RU.
+MAX_TOTAL = 120
+MAX_PER_COUNTRY_FILE = 40
+MAX_PER_COUNTRY_IN_MAIN = 18
+USER_AGENT = f"{BRAND}-HappUpdater/2.1 (+{REPO_URL})"
+
+# Prefer CDN mirrors reachable from Russia (raw.githubusercontent often times out).
+SUB_MAIN = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt"
+SUB_LITE = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ-lite.txt"
+SUB_YT = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/discord-youtube.txt"
+SUB_MIRROR = (
+    "https://ghproxy.net/https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt"
+)
 
 
 def b64_text(text: str) -> str:
@@ -260,14 +268,9 @@ def country_rank(code: str) -> int:
 def rename_node(link: str, country: str, index: int) -> str:
     flag = COUNTRY_FLAGS.get(country, "🌍")
     base = link.split("#", 1)[0]
-    proto = link_scheme(link).upper()
-    # Keep short: Happ title limit ~30 chars for nice UI.
-    title = f"{flag} {country}-{index:02d} · {BRAND}"
-    if len(title) > 40:
-        title = f"{flag} {country}-{index:02d}"
-    # serverDescription shows under the title in Happ.
-    desc = b64_text(f"{proto} · VPN от {BRAND}")
-    return f"{base}#{title}?serverDescription={desc.removeprefix('base64:')}"
+    # Short names = smaller subscription = fewer Happ timeouts.
+    title = f"{flag} {country}-{index:02d} {BRAND}"
+    return f"{base}#{title}"
 
 
 def prioritize(links: list[str]) -> list[str]:
@@ -310,28 +313,29 @@ def prioritize(links: list[str]) -> list[str]:
 
 
 def build_routing_deeplink() -> str:
-    """Global proxy + Cloudflare DNS so Discord/YouTube resolve outside RU blocks."""
+    """Global proxy + Cloudflare DNS. Uses Happ built-in geo files (no GitHub download)."""
+    # Empty Geo* URLs → Happ uses preinstalled geoip/geosite (avoids RU timeout on GitHub).
+    # Do NOT set LastUpdated every run — that forced re-download and caused timeouts.
     profile = {
         "Name": f"{BRAND}",
         "GlobalProxy": "true",
         "RemoteDNSType": "DoH",
         "RemoteDNSDomain": "https://cloudflare-dns.com/dns-query",
         "RemoteDNSIP": "1.1.1.1",
-        "DomesticDNSType": "DoH",
-        "DomesticDNSDomain": "https://dns.google/dns-query",
-        "DomesticDNSIP": "8.8.8.8",
-        "Geoipurl": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geoip.dat",
-        "Geositeurl": "https://github.com/Loyalsoldier/v2ray-rules-dat/releases/latest/download/geosite.dat",
-        "LastUpdated": str(int(time.time())),
+        "DomesticDNSType": "DoU",
+        "DomesticDNSDomain": "",
+        "DomesticDNSIP": "77.88.8.8",
+        "Geoipurl": "",
+        "Geositeurl": "",
         "DnsHosts": {
             "cloudflare-dns.com": "1.1.1.1",
-            "dns.google": "8.8.8.8",
         },
-        # Russian sites stay direct for speed; everything else (incl. YT/Discord) via VPN.
         "DirectSites": [
             "geosite:category-ru",
             "geosite:private",
             "domain:svoyskiy.ru",
+            "domain:jsdelivr.net",
+            "domain:ghproxy.net",
         ],
         "DirectIp": [
             "geoip:private",
@@ -349,11 +353,6 @@ def build_routing_deeplink() -> str:
             "geosite:google",
             "geosite:netflix",
             "geosite:twitter",
-            "geosite:facebook",
-            "geosite:instagram",
-            "geosite:tiktok",
-            "geosite:spotify",
-            "geosite:openai",
             "geosite:telegram",
             "geosite:category-anticensorship",
             "domain:discord.com",
@@ -364,7 +363,6 @@ def build_routing_deeplink() -> str:
             "domain:youtube.com",
             "domain:youtu.be",
             "domain:ytimg.com",
-            "domain:ggpht.com",
         ],
         "ProxyIp": [],
         "BlockSites": ["geosite:category-ads-all"],
@@ -484,6 +482,8 @@ def main() -> int:
 
     write_subscription(SUB_DIR / "happ.txt", renamed)
     write_plain(SUB_DIR / "happ-plain.txt", renamed)
+    # Ultra-light pack for flaky RU networks / Happ timeout.
+    write_subscription(SUB_DIR / "happ-lite.txt", renamed[:50])
 
     for old in COUNTRY_DIR.glob("*.txt"):
         old.unlink()
@@ -498,9 +498,9 @@ def main() -> int:
     # Recommended EU pack for Discord/YouTube from Russia.
     recommended: list[str] = []
     for code in ("FI", "NL", "DE", "SE", "PL", "TR", "GB"):
-        recommended.extend(by_country.get(code, [])[:15])
+        recommended.extend(by_country.get(code, [])[:12])
     if recommended:
-        write_subscription(SUB_DIR / "discord-youtube.txt", recommended[:80])
+        write_subscription(SUB_DIR / "discord-youtube.txt", recommended[:60])
 
     updated_at = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     status = {
@@ -513,11 +513,11 @@ def main() -> int:
         "by_country": dict(sorted(country_files.items(), key=lambda x: (-x[1], x[0]))),
         "sources": source_stats,
         "subscription": {
-            "main": f"https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
-            "discord_youtube": (
-                "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/discord-youtube.txt"
-            ),
-            "cdn": f"https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt",
+            "main": SUB_MAIN,
+            "lite": SUB_LITE,
+            "discord_youtube": SUB_YT,
+            "mirror": SUB_MIRROR,
+            "github_raw": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
         },
     }
     (META_DIR / "status.json").write_text(
