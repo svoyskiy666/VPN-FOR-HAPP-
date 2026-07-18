@@ -1,7 +1,7 @@
 # VPN FOR HAPP — [svoyskiy.ru](https://svoyskiy.ru)
 
 <!-- STATUS:START -->
-**Обновлено:** `2026-07-18 20:27 UTC` · **Серверов:** `42` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
+**Обновлено:** `2026-07-18 21:08 UTC` · **Серверов:** `50` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
 <!-- STATUS:END -->
 
 ## Ссылка для Happ (новая, простая)

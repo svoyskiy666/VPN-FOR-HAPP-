@@ -1,25 +1,27 @@
 {
-  "updated_at": "2026-07-18 20:27 UTC",
+  "updated_at": "2026-07-18 21:08 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
-  "total_nodes": 42,
-  "unique_collected": 1029,
-  "countries": 8,
+  "total_nodes": 50,
+  "unique_collected": 920,
+  "countries": 10,
   "by_country": {
     "FR": 12,
     "OTHER": 12,
-    "NL": 7,
-    "SE": 4,
-    "US": 3,
-    "DE": 2,
+    "DE": 7,
+    "GB": 4,
+    "NL": 4,
+    "US": 4,
+    "SE": 3,
+    "TR": 2,
     "FI": 1,
-    "GB": 1
+    "PL": 1
   },
   "sources": [
     {
       "url": "https://raw.githubusercontent.com/haker23378-netizen/free-vpn-telegram/main/output/subscription.txt",
       "ok": true,
-      "nodes": 516
+      "nodes": 397
     },
     {
       "url": "https://raw.githubusercontent.com/haker23378-netizen/free-vpn-telegram/main/output/sub/vless.txt",
@@ -29,7 +31,7 @@
     {
       "url": "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/v2ray-base64.txt",
       "ok": true,
-      "nodes": 108
+      "nodes": 111
     },
     {
       "url": "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/by-country/v2ray-base64-NL.txt",
@@ -49,12 +51,12 @@
     {
       "url": "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
       "ok": true,
-      "nodes": 39
+      "nodes": 40
     },
     {
       "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
       "ok": true,
-      "nodes": 366
+      "nodes": 372
     }
   ],
   "subscription": {
