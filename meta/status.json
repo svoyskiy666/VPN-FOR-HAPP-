@@ -1,24 +1,20 @@
 {
-  "updated_at": "2026-07-18 20:14 UTC",
+  "updated_at": "2026-07-18 20:15 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
   "total_nodes": 80,
   "unique_collected": 2616,
-  "countries": 13,
+  "countries": 9,
   "by_country": {
-    "DE": 16,
-    "OTHER": 16,
-    "GB": 13,
-    "NL": 8,
-    "US": 8,
-    "FR": 6,
+    "OTHER": 30,
+    "DE": 6,
+    "NL": 6,
     "SE": 6,
-    "FI": 2,
-    "HK": 1,
-    "IT": 1,
-    "JP": 1,
-    "TR": 1,
-    "TW": 1
+    "US": 6,
+    "FR": 5,
+    "FI": 1,
+    "GB": 1,
+    "HK": 1
   },
   "sources": [
     {

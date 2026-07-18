@@ -4,7 +4,7 @@
 Режим **split**: обычный интернет (Wi‑Fi) не падает, Discord/YouTube идут через VPN.
 
 <!-- STATUS:START -->
-**Обновлено:** `2026-07-18 20:14 UTC` · **Серверов:** `80` · **Локаций:** `13` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
+**Обновлено:** `2026-07-18 20:15 UTC` · **Серверов:** `80` · **Локаций:** `9` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
 <!-- STATUS:END -->
 
 ---
