@@ -1,7 +1,7 @@
 # VPN FOR HAPP — [svoyskiy.ru](https://svoyskiy.ru)
 
 <!-- STATUS:START -->
-**Обновлено:** `2026-07-18 20:17 UTC` · **Серверов:** `80` · **Локаций:** `13` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
+**Обновлено:** `2026-07-18 20:18 UTC` · **Серверов:** `80` · **Локаций:** `9` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
 <!-- STATUS:END -->
 
 ## DNS_PROBE_FINISHED_NO_INTERNET / пропал интернет
