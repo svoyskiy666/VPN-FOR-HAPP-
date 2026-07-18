@@ -1,0 +1,84 @@
+{
+  "updated_at": "2026-07-18 19:47 UTC",
+  "total_nodes": 400,
+  "unique_collected": 2612,
+  "countries": 24,
+  "by_country": {
+    "DE": 35,
+    "FR": 35,
+    "JP": 35,
+    "NL": 35,
+    "OTHER": 35,
+    "RU": 35,
+    "US": 35,
+    "GB": 30,
+    "SG": 30,
+    "HK": 12,
+    "SE": 12,
+    "CH": 11,
+    "KR": 10,
+    "AU": 9,
+    "CA": 8,
+    "TW": 8,
+    "TR": 7,
+    "FI": 6,
+    "BR": 3,
+    "IE": 2,
+    "IN": 2,
+    "IT": 2,
+    "PL": 2,
+    "ES": 1
+  },
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/Au1rxx/free-vpn-subscriptions/main/output/v2ray-base64.txt",
+      "ok": true,
+      "nodes": 150
+    },
+    {
+      "url": "https://raw.githubusercontent.com/awesome-vpn/awesome-vpn/master/all",
+      "ok": true,
+      "nodes": 40
+    },
+    {
+      "url": "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub1.txt",
+      "ok": true,
+      "nodes": 284
+    },
+    {
+      "url": "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub2.txt",
+      "ok": true,
+      "nodes": 358
+    },
+    {
+      "url": "https://raw.githubusercontent.com/barry-far/V2ray-config/main/Sub3.txt",
+      "ok": true,
+      "nodes": 300
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ebrasha/free-v2ray-public-list/main/V2Ray-Config-By-EbraSha.txt",
+      "ok": true,
+      "nodes": 815
+    },
+    {
+      "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/v2ray/super-sub.txt",
+      "ok": true,
+      "nodes": 196
+    },
+    {
+      "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/vless.txt",
+      "ok": true,
+      "nodes": 333
+    },
+    {
+      "url": "https://raw.githubusercontent.com/MatinGhanbari/v2ray-configs/main/subscriptions/filtered/subs/hysteria2.txt",
+      "ok": true,
+      "nodes": 136
+    }
+  ],
+  "subscription": {
+    "main": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
+    "cdn": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt",
+    "plain": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ-plain.txt"
+  }
+}
