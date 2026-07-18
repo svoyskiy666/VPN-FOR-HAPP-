@@ -1,20 +1,24 @@
 {
-  "updated_at": "2026-07-18 20:15 UTC",
+  "updated_at": "2026-07-18 20:17 UTC",
   "brand": "svoyskiy.ru",
   "website": "https://svoyskiy.ru",
   "total_nodes": 80,
   "unique_collected": 2616,
-  "countries": 9,
+  "countries": 13,
   "by_country": {
-    "OTHER": 30,
-    "DE": 6,
-    "NL": 6,
+    "DE": 16,
+    "OTHER": 16,
+    "GB": 13,
+    "NL": 8,
+    "US": 8,
+    "FR": 6,
     "SE": 6,
-    "US": 6,
-    "FR": 5,
-    "FI": 1,
-    "GB": 1,
-    "HK": 1
+    "FI": 2,
+    "HK": 1,
+    "IT": 1,
+    "JP": 1,
+    "TR": 1,
+    "TW": 1
   },
   "sources": [
     {
@@ -64,10 +68,11 @@
     }
   ],
   "subscription": {
+    "safe": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/wifi-safe.txt",
     "main": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt",
     "lite": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ-lite.txt",
     "discord_youtube": "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/discord-youtube.txt",
-    "mirror": "https://ghproxy.net/https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
-    "github_raw": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt"
+    "mirror": "https://ghproxy.net/https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt",
+    "github_raw": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt"
   }
 }

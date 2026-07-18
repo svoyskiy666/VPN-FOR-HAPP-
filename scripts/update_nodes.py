@@ -149,14 +149,17 @@ MAX_PER_COUNTRY_FILE = 30
 MAX_PER_COUNTRY_IN_MAIN = 14
 TCP_CHECK_WORKERS = 40
 TCP_CHECK_TIMEOUT = 3.0
-USER_AGENT = f"{BRAND}-HappUpdater/2.2 (+{REPO_URL})"
+USER_AGENT = f"{BRAND}-HappUpdater/2.3 (+{REPO_URL})"
 
 # Prefer CDN mirrors reachable from Russia (raw.githubusercontent often times out).
+# wifi-safe.txt = per-app proxy only (does not kill system DNS / Wi‑Fi).
+SUB_SAFE = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/wifi-safe.txt"
 SUB_MAIN = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ.txt"
 SUB_LITE = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/happ-lite.txt"
 SUB_YT = "https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/discord-youtube.txt"
 SUB_MIRROR = (
-    "https://ghproxy.net/https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt"
+    "https://ghproxy.net/https://raw.githubusercontent.com/"
+    "svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt"
 )
 
 
@@ -390,101 +393,44 @@ def filter_alive(links: list[str]) -> list[str]:
     return alive
 
 
-def build_routing_deeplink() -> str:
-    """Split tunnel: Wi‑Fi/direct by default; only blocked sites via VPN.
-
-    GlobalProxy=true was killing internet when a free node was dead.
-    """
-    profile = {
-        "Name": f"{BRAND}-split",
-        "GlobalProxy": "false",
-        "RemoteDNSType": "DoH",
-        "RemoteDNSDomain": "https://cloudflare-dns.com/dns-query",
-        "RemoteDNSIP": "1.1.1.1",
-        "DomesticDNSType": "DoU",
-        "DomesticDNSDomain": "",
-        "DomesticDNSIP": "77.88.8.8",
-        "Geoipurl": "",
-        "Geositeurl": "",
-        "DnsHosts": {
-            "cloudflare-dns.com": "1.1.1.1",
-        },
-        "DirectSites": [
-            "geosite:private",
-            "domain:svoyskiy.ru",
-            "domain:jsdelivr.net",
-            "domain:ghproxy.net",
-            "domain:yandex.ru",
-            "domain:yandex.net",
-            "domain:vk.com",
-            "domain:mail.ru",
-            "domain:ok.ru",
-            "domain:wildberries.ru",
-            "domain:ozon.ru",
-            "domain:avito.ru",
-            "domain:gosuslugi.ru",
-        ],
-        "DirectIp": [
-            "geoip:private",
-            "10.0.0.0/8",
-            "172.16.0.0/12",
-            "192.168.0.0/16",
-            "169.254.0.0/16",
-            "224.0.0.0/4",
-            "255.255.255.255",
-        ],
-        # Explicit domains — do not rely only on geosite tags in built-in DBs.
-        "ProxySites": [
-            "domain:discord.com",
-            "domain:discord.gg",
-            "domain:discordapp.com",
-            "domain:discordapp.net",
-            "domain:discord.media",
-            "domain:discord.co",
-            "domain:discord-attachments-uploads-prd.storage.googleapis.com",
-            "domain:youtube.com",
-            "domain:youtu.be",
-            "domain:youtube-nocookie.com",
-            "domain:ytimg.com",
-            "domain:googlevideo.com",
-            "domain:ggpht.com",
-            "domain:google.com",
-            "domain:googleapis.com",
-            "domain:gstatic.com",
-            "domain:instagram.com",
-            "domain:cdninstagram.com",
-            "domain:facebook.com",
-            "domain:fbcdn.net",
-            "domain:twitter.com",
-            "domain:x.com",
-            "domain:twimg.com",
-            "domain:tiktok.com",
-            "domain:tiktokv.com",
-            "domain:openai.com",
-            "domain:chatgpt.com",
-            "domain:spotify.com",
-            "domain:scdn.co",
-            "geosite:discord",
-            "geosite:youtube",
-            "geosite:google",
-            "geosite:telegram",
-        ],
-        "ProxyIp": [],
-        "BlockSites": [],
-        "BlockIp": [],
-        "DomainStrategy": "AsIs",
-        "FakeDNS": "false",
-    }
-    raw = json.dumps(profile, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
-    return "happ://routing/onadd/" + base64.b64encode(raw).decode("ascii")
+# Only these apps go into the VPN tunnel (Android). Everything else keeps normal Wi‑Fi/DNS.
+PER_APP_PROXY_PACKAGES = ",".join(
+    [
+        "com.discord",
+        "com.android.chrome",
+        "com.chrome.beta",
+        "com.chrome.dev",
+        "com.google.android.youtube",
+        "org.mozilla.firefox",
+        "org.mozilla.firefox_beta",
+        "com.yandex.browser",
+        "com.opera.browser",
+        "com.opera.mini.native",
+        "com.microsoft.emmx",
+        "com.brave.browser",
+        "com.sec.android.app.sbrowser",
+        "com.instagram.android",
+        "org.telegram.messenger",
+        "org.telegram.messenger.web",
+        "org.thunderdog.challegram",
+        "com.zhiliaoapp.musically",  # TikTok
+        "com.twitter.android",
+        "com.spotify.music",
+        "com.openai.chatgpt",
+    ]
+)
 
 
 def subscription_header_lines() -> list[str]:
+    """Safe mode: no full-device TUN routing. Per-app proxy only (fixes NO_INTERNET)."""
     announce = (
-        f"VPN от {BRAND}. Режим split: Wi‑Fi не падает. "
-        f"Discord/YouTube через VPN. Бери FI/NL/DE. {BRAND_URL}"
+        f"VPN от {BRAND}. В туннель идут только Discord/браузер/YouTube. "
+        f"Остальной интернет не трогаем. Удали старую подписку! {BRAND_URL}"
     )
-    info = f"VPN от {BRAND}: Discord/YouTube через VPN, остальной интернет — напрямую"
+    info = (
+        f"VPN от {BRAND}: только Discord и браузер через VPN — "
+        f"чтобы Wi‑Fi и DNS не пропадали"
+    )
     return [
         f"#profile-title: {BRAND}",
         f"#profile-web-page-url: {BRAND_URL}",
@@ -495,13 +441,13 @@ def subscription_header_lines() -> list[str]:
         f"#sub-info-button-text: Сайт {BRAND}",
         f"#sub-info-button-link: {BRAND_URL}",
         "#profile-update-interval: 1",
-        "#routing-enable: 1",
-        # Fragmentation off by default — it can break Wi‑Fi on some ISPs/phones.
+        # Kill previous routing profiles that captured ALL DNS → NO_INTERNET.
+        "#routing-enable: 0",
+        "happ://routing/off",
         "#fragmentation-enable: 0",
-        "#server-address-resolve-enable: 1",
-        "#server-address-resolve-dns-domain: https://cloudflare-dns.com/dns-query",
-        "#server-address-resolve-dns-ip: 1.1.1.1",
-        build_routing_deeplink(),
+        # Android: VPN only for selected apps — system DNS/Wi‑Fi stay alive.
+        "#per-app-proxy-mode: on",
+        f"#per-app-proxy-list-set: {PER_APP_PROXY_PACKAGES}",
     ]
 
 
@@ -599,7 +545,10 @@ def main() -> int:
     write_subscription(SUB_DIR / "happ.txt", renamed)
     write_plain(SUB_DIR / "happ-plain.txt", renamed)
     # Ultra-light pack for flaky RU networks / Happ timeout.
-    write_subscription(SUB_DIR / "happ-lite.txt", renamed[:50])
+    lite = renamed[:50]
+    write_subscription(SUB_DIR / "happ-lite.txt", lite)
+    # New filename avoids CDN cache of old broken GlobalProxy subscriptions.
+    write_subscription(SUB_DIR / "wifi-safe.txt", lite)
 
     for old in COUNTRY_DIR.glob("*.txt"):
         old.unlink()
@@ -629,11 +578,14 @@ def main() -> int:
         "by_country": dict(sorted(country_files.items(), key=lambda x: (-x[1], x[0]))),
         "sources": source_stats,
         "subscription": {
+            "safe": SUB_SAFE,
             "main": SUB_MAIN,
             "lite": SUB_LITE,
             "discord_youtube": SUB_YT,
             "mirror": SUB_MIRROR,
-            "github_raw": "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/happ.txt",
+            "github_raw": (
+                "https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/wifi-safe.txt"
+            ),
         },
     }
     (META_DIR / "status.json").write_text(
