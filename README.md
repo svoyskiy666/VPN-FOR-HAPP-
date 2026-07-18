@@ -1,61 +1,45 @@
 # VPN FOR HAPP — [svoyskiy.ru](https://svoyskiy.ru)
 
-<!-- STATUS:START -->
-**Обновлено:** `2026-07-18 21:08 UTC` · **Серверов:** `50` · **VPN:** [`svoyskiy.ru`](https://svoyskiy.ru)
-<!-- STATUS:END -->
+Приватный VPN на своём VPS. **Без публичных нод из интернета.**
 
-## Ссылка для Happ (новая, простая)
+Протокол: **VLESS + Reality** (трафик выглядит как обычный HTTPS к Microsoft).  
+Локации в Happ: **🇫🇮 FI / 🇳🇱 NL / 🇩🇪 DE** (один сервер, выход — Финляндия).  
+Режим: **белый список** (Discord, YouTube, Instagram и т.д. через VPN; остальное — напрямую).
+
+---
+
+## Ссылка для подключения (скрытая)
+
+Открой на телефоне с Happ:
 
 ```
-https://cdn.jsdelivr.net/gh/svoyskiy666/VPN-FOR-HAPP-@main/sub/simple.txt
+happ://crypt5/fzvdbUiywnkTuVjBs1oJ8CT316QHxI0GqNpA5Kd8QJxfzC4UuZShylTrsHzfg7uBFCHHVegjqsf7viqwtlJk6xnF+HfG7wNbhdzcZDTtR9CqLb/GfbE1u+E9K/+YkEd5FY8qdztzyvMfqNeZq3PRrhrlFlClLQWB1GTIaLeiTx5ZWnO2u4+AyrWXHtuqecqOepAROUO5qfAUSLW8/3lF7CO0GEe1/l5QkYr4aMTDoKbC5ysVLNSBuumMx5sP3poHAmok0CYFBHVMPmVA2QH7FFgpvnAXFprsZwqToeBzbWEL+e8Xrxsvbbr6eNA12AqI/m+BTzJJ4y79EkRcvsrl4UcG+9fq5FSIFu8ufS4zmDhQoNgreQ9+jlr9Ae2r3y7ULQGBMDPhoGbTsAvm1/6VC26olwqm0RNmu14LrDTGKMhWxTtYUJGyf5iu/LTEMSy93wbul7m5nVD6/TFULBkHIbEcPIvfrID1TtDZMNEbnxXj8kvV3/VOAcl02onCyj0t8Lp08wkORCtpwQm6R3+NVrtIJ25JSaQl4/OPA1S1fGnjOMtYei/jCsRlkvoTwPXZE4IGZs3r8KgvAaRPvpcc4mpN7cD9egOqBqWtqIC+VwSpeyWEgPceAERRRmOhGQ9wHfgeKBYjFyBftaJVYAft+SsIqi2l7AMANq8AYRtbfzoak+qdh1NKfT/2OgY54X/vFl2ndoSE6XRIbTDx2x0a/3obb+jxoXTKoriksvo4un0kLDb6jueEnKG8NFNJ/VsgUI+VhMYYQFUcF3d7pyinjHv+n2A8Tg514QoEe5417Wruh44ZdDo9ZmAF17bPfRylkt9z41m3xych0v4Xwq5RSy6SM+/1ygVqZk/iOLM2fo4=ff
 ```
 
-Зеркало:
+Или вручную (**никому не отправляй**):
 
 ```
-https://ghproxy.net/https://raw.githubusercontent.com/svoyskiy666/VPN-FOR-HAPP-/main/sub/simple.txt
+http://78.17.17.200:8443/97b5806c061ad70e12c128a0c623809d0689968944fe1ff9/sub
 ```
 
 ---
 
-## Быстрый импорт
+## Как подключить
 
-```
-happ://crypt5/fzvdddViJfMDvi63m3IEwqrl15BCl+6S3tEwUeJXalGDxKgQVjtZCLlJIlXVKvT8pRmXVPhP+RyK5ljN2//bmYRb2RaVnoaa1aIXVrKeZoeZ4+iVWj0WHsS0ENT8y0XT2gjYBoXtrt+o8y8Wi4BLzsiuyHU73H3jg/wYH6Uzmv1K/77UvrQ8Ih4/2FU=kaPZSf3TGHwW0i203EDGFJbuviozHwjNdsHCbL7/4hMFjUjwAdQ8qjuL7JbFk2/aBdNDyFOVs8i7o6fbiI5wXhB1tXPQfWvFPoXPeumVKqBjHjSat3e8+4a+BlygyGwPIxckvzy5WXlinWX/6KzEvy8kVK3kHQepmanVrTArE7HIO52nXXWgi7xQgVEwP74KcxmLK8BLpsMgpXIGMMciXliW7dE5PNpfw31zKMmc44zfZAOS/muhW50dHRDfCkfd6yEmXcoLd5jXRN+6Lo3T8i2LNJmHmKN1aqhFCuQonDiHKp68CHCp/chC8RBCxdNVkhmk4tcSIQxyChOZy1jAC2JjGdR6uHfHSiPs6ENe5xKzebbLKf43n21OCX1lX0uffJUyxdKQH6cfcuzudPWx0mU0rcN+i0Bugpsartr+eOKViUUVpiliYIDPTajegJp8sqGx8rWrkdyxA71IfcICPPi0P6ryxmcB1ep4F5gtPRGjMHqJDNTQWKAyBgeshlANkrb2zgddrGQGu+v56o+v9ysjKmLi5GVgo/DX26FTMQ6aa7ovkbKiA9jUnQsm5qN8LJ3MdTZtkp1Mx+rd7sABaMEdsdMuo6ZeKO1STxuQnmHdQFn+qimhA7BsBsj9Y/n/SA+NOyvfmvrY2ClO5MZEyAEq3uwQ53oki5HKC7RlfoU=ff
-```
+1. Удали **все старые** бесплатные подписки в Happ  
+2. Добавь ссылку выше  
+3. Выбери сервер **FI / NL / DE**  
+4. Подключись  
 
-## Если VPN «не работает» / нет интернета
-
-### 1. Чистая установка подписки
-1. Удали **все** старые подписки в Happ  
-2. Выключи VPN  
-3. Добавь ссылку `simple.txt` выше  
-4. Обнови список серверов  
-5. Выбери любой сервер с 🇳🇱 / 🇩🇪 / 🇫🇮  
-6. Подключись  
-
-### 2. Чтобы Wi‑Fi не пропадал (обязательно на Android)
-Happ → **Настройки** → **Приложения** (или Per-app proxy):
-- режим: **Только выбранные приложения**
-- включи: **Discord**, **Chrome**, **YouTube**
-- остальное — **не** через VPN  
-
-Так DNS телефона не ломается.
-
-### 3. Проверь ноду
-Бесплатные серверы часто дохнут. Если не открывается — листай **следующий** сервер NL/DE/FI.
-
-### 4. Запасная подписка (уже проверена под РФ)
-Если наша не грузится — временно эта:
-
-```
-https://cdn.jsdelivr.net/gh/haker23378-netizen/free-vpn-telegram@main/output/subscription.txt
-```
+Обычные сайты РФ должны работать. Discord/YouTube — через VPN.
 
 ---
 
-## Честно
+## Важно
 
-Публичные бесплатные ноды **нестабильны**.  
-Мы собираем и обновляем их каждые 2 часа, но гарантии uptime нет.  
-Для нормального Discord/YouTube нужен свой сервер или платный VPN: **[svoyskiy.ru](https://svoyskiy.ru)**
+- Не публикуй ссылку подписки — по ней можно пользоваться твоим VPS  
+- Смени пароль root на сервере (он светился в чате)  
+- Реальный IP выхода: **Финляндия** (Helsinki) для всех трёх «локаций»  
+- Для настоящих NL/DE нужны отдельные VPS в этих странах  
+
+Сайт: [svoyskiy.ru](https://svoyskiy.ru)

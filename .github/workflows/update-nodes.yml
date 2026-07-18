@@ -1,49 +1,9 @@
+# Disabled: private VPS subscription — no public free nodes.
 name: Update VPN nodes
-
 on:
-  schedule:
-    # Every 2 hours — keep Happ subscription fresh.
-    - cron: "17 */2 * * *"
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths:
-      - "scripts/update_nodes.py"
-      - ".github/workflows/update-nodes.yml"
-
-permissions:
-  contents: write
-
-concurrency:
-  group: update-nodes
-  cancel-in-progress: true
-
 jobs:
-  update:
+  noop:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Aggregate free nodes
-        run: python3 scripts/update_nodes.py
-
-      - name: Commit & push if changed
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sub meta README.md
-          if git diff --staged --quiet; then
-            echo "No changes"
-            exit 0
-          fi
-          git commit -m "chore: refresh Happ VPN subscription nodes"
-          git push
+      - run: echo "Public free-node aggregation disabled. Using private VPS only."
